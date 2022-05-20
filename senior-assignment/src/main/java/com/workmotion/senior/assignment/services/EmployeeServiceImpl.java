@@ -1,10 +1,5 @@
 package com.workmotion.senior.assignment.services;
 
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.workmotion.senior.assignment.entities.Employee;
 import com.workmotion.senior.assignment.enums.State;
 import com.workmotion.senior.assignment.repositories.EmployeeRepository;
+import com.workmotion.senior.assignment.responses.Response;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -20,7 +16,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private EmployeeRepository employeeRepository;
 
 	@Override
-	public Employee saveEmployee(Employee employee) {
+	public Employee createEmployee(Employee employee) {
 		employee.setState(State.ADDED.getState());
 		return employeeRepository.save(employee);
 	}
@@ -32,25 +28,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public Employee updateEmployee(Employee employee, String state) {
-		Employee savedEmployee = employeeRepository.findById(employee.getEmployeeId()).get();
-
-		if (Objects.nonNull(employee.getName()) && !"".equalsIgnoreCase(employee.getName())) {
-			savedEmployee.setName(employee.getName());
+	public Employee updateEmployee(Employee employee, String nextState) throws Exception {
+		if (employee.getState().equals(State.ADDED.getState()) && !nextState.equals(State.IN_CHECK.getState())) {
+//			return new Response("Transition Not Allowed");
+			throw new Exception("Transition Not Allowed");
 		}
-
-		if (Objects.nonNull(employee.getMobile()) && !"".equalsIgnoreCase(employee.getMobile())) {
-			savedEmployee.setMobile(employee.getMobile());
-		}
-
-		if (Objects.nonNull(employee.getState()) && !"".equalsIgnoreCase(employee.getState())) {
-			savedEmployee.setState(employee.getState());
-		}
-
-		if (Objects.nonNull(employee.getAge())) {
-			savedEmployee.setAge(employee.getAge());
-		}
-
-		return employeeRepository.save(savedEmployee);
+		
+		return employeeRepository.save(employee);
 	}
 }

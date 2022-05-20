@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workmotion.senior.assignment.entities.Employee;
+import com.workmotion.senior.assignment.responses.Response;
 import com.workmotion.senior.assignment.services.EmployeeService;
 
 @RestController
@@ -18,8 +19,8 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 
 	@PostMapping("/employees")
-	public Employee saveEmployee(@RequestBody Employee employee) {
-		return employeeService.saveEmployee(employee);
+	public Employee createEmployee(@RequestBody Employee employee) {
+		return employeeService.createEmployee(employee);
 	}
 
 	@GetMapping("/employees")
@@ -28,7 +29,7 @@ public class EmployeeController {
 	}
 
 	@PutMapping("/employees")
-	public Employee updateEmployee(@RequestBody Employee employee, @RequestParam("state") String state) {
+	public Employee updateEmployee(@RequestBody Employee employee, @RequestParam("state") String state) throws Exception {
 		return employeeService.updateEmployee(employee, state);
 	}
 }
