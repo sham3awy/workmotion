@@ -39,8 +39,12 @@ public class TestEmployeeService {
     public void changeState() {
         employeeService.changeState(1L, "IN_CHECK");
         Assertions.assertEquals(employee.getState(), StateEnum.IN_CHECK);
-        employeeService.changeState(1L, "APPROVED");
-        Assertions.assertEquals(employee.getState(), StateEnum.APPROVED);
+        employeeService.changeState(1L, "SECURITY_CHECK_FINISHED");
+        Assertions.assertEquals(employee.getState(), StateEnum.SECURITY_CHECK_FINISHED);
+        employeeService.changeState(1L, "WORK_PERMIT_CHECK_PENDING_VERIFICATION");
+        Assertions.assertEquals(employee.getState(), StateEnum.WORK_PERMIT_CHECK_PENDING_VERIFICATION);
+        employeeService.changeState(1L, "WORK_PERMIT_CHECK_FINISHED");
+        Assertions.assertEquals(employee.getState(), StateEnum.WORK_PERMIT_CHECK_FINISHED);
         employeeService.changeState(1L, "ACTIVE");
         Assertions.assertEquals(employee.getState(), StateEnum.ACTIVE);
     }
