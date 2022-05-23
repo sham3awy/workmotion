@@ -14,7 +14,7 @@ import com.workmotion.senior.assignment.enums.StateEnum;
 @Table(name = "state")
 public class State {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private boolean securityCheckStarted;
 	private boolean workPermitCheckStarted;
