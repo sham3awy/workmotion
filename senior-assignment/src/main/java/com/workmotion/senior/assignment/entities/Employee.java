@@ -1,27 +1,46 @@
 package com.workmotion.senior.assignment.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "employee")
 public class Employee {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long employeeId;
+	private Long id;
 	private String name;
-	private int age;
 	private String mobile;
-	private String state;
+	private String email;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "state_id", referencedColumnName = "id")
+	private State state;
 
-	public Long getEmployeeId() {
-		return employeeId;
+	public Employee() {
+		super();
 	}
 
-	public void setEmployeeId(Long employeeId) {
-		this.employeeId = employeeId;
+	public Employee(Long id, String name, String mobile, String email) {
+		this.id = id;
+		this.name = name;
+		this.mobile = mobile;
+		this.email = email;
+		this.state = new State();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long employeeId) {
+		this.id = employeeId;
 	}
 
 	public String getName() {
@@ -32,12 +51,12 @@ public class Employee {
 		this.name = name;
 	}
 
-	public int getAge() {
-		return age;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setAge(int age) {
-		this.age = age;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getMobile() {
@@ -48,11 +67,11 @@ public class Employee {
 		this.mobile = mobile;
 	}
 
-	public String getState() {
+	public State getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(State state) {
 		this.state = state;
 	}
 }
