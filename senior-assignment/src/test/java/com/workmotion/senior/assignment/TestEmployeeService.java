@@ -3,86 +3,105 @@ package com.workmotion.senior.assignment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import com.workmotion.senior.assignment.enums.StateEnum;
 import com.workmotion.senior.assignment.models.dto.EmployeeResponse;
 import com.workmotion.senior.assignment.models.orm.Employee;
 import com.workmotion.senior.assignment.services.EmployeeServiceImpl;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = SeniorAssignmentApplication.class)
+//@WebMvcTest(EmployeeController.class)
+@SpringBootTest
 public class TestEmployeeService {
 
-    private EmployeeServiceImpl employeeService = new EmployeeServiceImpl();
-    Employee employee;
-    EmployeeResponse employeeResponse;
+	@Autowired
+	private EmployeeServiceImpl employeeService = new EmployeeServiceImpl();
 
-    @BeforeEach
-    public void before() {
-        employee = new Employee();
-        employee.setName("Mohamed");
-        employee.setMobile("0556489014");
-        employee.setEmail("mohamedabosham3a@yahoo.com");
-        employeeResponse = employeeService.addEmployee(employee);
-    }
+	Employee employee;
 
-    @Test
-    public void createEmployee(){
-        Employee employee = new Employee();
-        employee.setName("Mohamed");
-        employee.setMobile("0556489014");
-        employee.setEmail("mohamedabosham3a@yahoo.com");
-        employeeResponse = employeeService.addEmployee(employee);
-        Assertions.assertEquals(employeeResponse.getEmployee().getId(), 2L);
-        Assertions.assertEquals(employeeResponse.getEmployee().getName(), "Mohamed");
-        Assertions.assertEquals(employeeResponse.getEmployee().getMobile(), "0556489014");
-        Assertions.assertEquals(employeeResponse.getEmployee().getEmail(), "mohamedabosham3a@yahoo.com");
-    }
+	@BeforeEach
+	public void before() {
+		employee = new Employee();
+		employee.setName("Mohamed");
+		employee.setMobile("0556489014");
+		employee.setEmail("mohamedabosham3a@yahoo.com");
+		employee = employeeService.addEmployee(employee).getEmployee();
+	}
 
-    @Test
-    public void changeState() {
-        employeeService.changeState(1L, "IN_CHECK");
-        Assertions.assertEquals(employee.getState(), StateEnum.IN_CHECK);
-        employeeService.changeState(1L, "SECURITY_CHECK_FINISHED");
-        Assertions.assertEquals(employee.getState(), StateEnum.SECURITY_CHECK_FINISHED);
-        employeeService.changeState(1L, "WORK_PERMIT_CHECK_PENDING_VERIFICATION");
-        Assertions.assertEquals(employee.getState(), StateEnum.WORK_PERMIT_CHECK_PENDING_VERIFICATION);
-        employeeService.changeState(1L, "WORK_PERMIT_CHECK_FINISHED");
-        Assertions.assertEquals(employee.getState(), StateEnum.WORK_PERMIT_CHECK_FINISHED);
-        employeeService.changeState(1L, "ACTIVE");
-        Assertions.assertEquals(employee.getState(), StateEnum.ACTIVE);
-    }
+	@Test
+	public void createEmployee() {
+		Employee employee = new Employee();
+		employee.setName("Mohamed");
+		employee.setMobile("0556489014");
+		employee.setEmail("mohamedabosham3a@yahoo.com");
+		employee = employeeService.addEmployee(employee).getEmployee();
+		Assertions.assertEquals(employee.getName(), "Mohamed");
+		Assertions.assertEquals(employee.getMobile(), "0556489014");
+		Assertions.assertEquals(employee.getEmail(), "mohamedabosham3a@yahoo.com");
+	}
 
-    @Test
-    public void changeStateInvalid() {
-        try {
-            employeeService.changeState(1L, "IN_CHECK");
-            Assertions.assertEquals(employee.getState(), StateEnum.IN_CHECK);
-            employeeService.changeState(1L, "ACTIVE");
-            Assertions.fail("The expected exception wasn't thrown.");
-        }
-        catch(IllegalStateException e) {
-            System.out.println(e.getMessage());
-            Assertions.assertEquals("No valid leaving transitions are permitted from state 'IN_CHECK' for trigger 'ACTIVE'. Consider ignoring the trigger.",e.getMessage());
-        }
-    }
+	@Test
+	public void changeState() {
+		Employee employee = employeeService.fetchEmployeeDetails(1L).getEmployee();
 
-    @Test
-    public void getEmployee() {
-    	EmployeeResponse employee = employeeService.fetchEmployeeDetails(1L);
-        Assertions.assertEquals(employee.getEmployee().getId(), 1L);
-        Assertions.assertEquals(employee.getEmployee().getName(), "Mohamed");
-        Assertions.assertEquals(employee.getEmployee().getMobile(), "0556489014");
-        Assertions.assertEquals(employee.getEmployee().getEmail(), "mohamedabosham3a@yahoo.com");
+		employee = employeeService.changeState(employee.getId(), "IN_CHECK").getEmployee();
+		Assertions.assertEquals(employee.getState().getState(), StateEnum.WORK_PERMIT_CHECK_STARTED);
 
-    }
+		employee = employeeService.changeState(employee.getId(), "SECURITY_CHECK_FINISHED").getEmployee();
+		Assertions.assertEquals(employee.getState().getState(), StateEnum.SECURITY_CHECK_FINISHED);
 
-    @Test
-    public void getEmployeeInvalid() {
-        try {
-             employeeService.fetchEmployeeDetails(100L);
-             Assertions.fail("The expected exception wasn't thrown.");
-        }
-        catch(Exception e){
-        Assertions.assertEquals("Employee with requested id not found", e.getMessage());
-        }
-    }
+		employee = employeeService.changeState(employee.getId(), "WORK_PERMIT_CHECK_PENDING_VERIFICATION")
+				.getEmployee();
+		Assertions.assertEquals(employee.getState().getState(), StateEnum.WORK_PERMIT_CHECK_PENDING_VERIFICATION);
+
+		employee = employeeService.changeState(employee.getId(), "WORK_PERMIT_CHECK_FINISHED").getEmployee();
+		Assertions.assertEquals(employee.getState().getState(), StateEnum.APPROVED);
+
+		employee = employeeService.changeState(employee.getId(), "ACTIVE").getEmployee();
+		Assertions.assertEquals(employee.getState().getState(), StateEnum.ACTIVE);
+	}
+
+	@Test
+	public void changeStateInvalid() {
+		
+			EmployeeResponse employeeResponse = employeeService.fetchEmployeeDetails(2L);
+			employeeResponse = employeeService.changeState(employeeResponse.getEmployee().getId(), "IN_CHECK");
+			Assertions.assertEquals(employeeResponse.getEmployee().getState().getState(),
+					StateEnum.WORK_PERMIT_CHECK_STARTED);
+			employeeResponse = employeeService.changeState(employeeResponse.getEmployee().getId(), "ACTIVE");
+			if (!employeeResponse.getCode().equals(HttpStatus.NOT_FOUND.toString())
+					&& !employeeResponse.getCode().equals(HttpStatus.METHOD_NOT_ALLOWED.toString())) {
+				Assertions.fail("The expected exception wasn't thrown.");
+			} else {
+				Assertions.assertEquals(
+						"No valid leaving transitions are permitted from state 'WORK_PERMIT_CHECK_STARTED' for trigger 'ACTIVE'. Consider ignoring the trigger.",
+						employeeResponse.getErrorMessageContent());
+			}
+		
+	}
+
+	@Test
+	public void getEmployee() {
+		Employee employee = employeeService.fetchEmployeeDetails(1L).getEmployee();
+		Assertions.assertEquals(employee.getId(), 1);
+		Assertions.assertEquals(employee.getName(), "Mohamed");
+		Assertions.assertEquals(employee.getMobile(), "0556489014");
+		Assertions.assertEquals(employee.getEmail(), "mohamedabosham3a@yahoo.com");
+	}
+
+	@Test
+	public void getEmployeeInvalid() {
+		EmployeeResponse employeeResponse = employeeService.fetchEmployeeDetails(100L);
+		if (!employeeResponse.getCode().equals(HttpStatus.NOT_FOUND.toString())) {
+			Assertions.fail("The expected exception wasn't thrown.");
+		} else {
+			Assertions.assertEquals("Employee with requested id not found", employeeResponse.getErrorMessageContent());
+		}
+	}
 }

@@ -1,6 +1,4 @@
-# Dockerfile
-FROM openjdk:11-jdk-slim
-VOLUME /tmp
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+FROM openjdk:11
+EXPOSE 8080
+ADD target/senior-assignment-docker.jar senior-assignment-docker.jar
+ENTRYPOINT ["java","-jar","/senior-assignment-docker.jar"]

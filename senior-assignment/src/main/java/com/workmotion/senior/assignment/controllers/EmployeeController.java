@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.workmotion.senior.assignment.models.dto.BaseResponse;
 import com.workmotion.senior.assignment.models.dto.EmployeeResponse;
 import com.workmotion.senior.assignment.models.orm.Employee;
 import com.workmotion.senior.assignment.services.EmployeeService;
@@ -21,7 +20,7 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 
 	@PostMapping("/add")
-	public BaseResponse addEmployee(@RequestBody Employee employee) {
+	public EmployeeResponse addEmployee(@RequestBody Employee employee) {
 		return this.employeeService.addEmployee(employee);
 	}
 	
@@ -31,7 +30,7 @@ public class EmployeeController {
 	}
 	
 	@PutMapping("/change-state")
-	public BaseResponse changeEmployeeState(@RequestParam("id") Long id,
+	public EmployeeResponse changeEmployeeState(@RequestParam("id") Long id,
 			@RequestParam("state") String state) {
 		return employeeService.changeState(id, state);
 	}

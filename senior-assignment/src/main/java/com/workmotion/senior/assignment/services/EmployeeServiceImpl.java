@@ -3,7 +3,6 @@ package com.workmotion.senior.assignment.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.webjars.NotFoundException;
 import com.workmotion.senior.assignment.models.dto.EmployeeResponse;
 import com.workmotion.senior.assignment.models.orm.Employee;
@@ -33,7 +32,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	@ResponseBody
 	public EmployeeResponse fetchEmployeeDetails(Long id) {
 		EmployeeResponse employee = new EmployeeResponse();
 		try {
