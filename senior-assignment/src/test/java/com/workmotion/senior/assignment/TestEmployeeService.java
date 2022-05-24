@@ -16,7 +16,6 @@ import com.workmotion.senior.assignment.services.EmployeeServiceImpl;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = SeniorAssignmentApplication.class)
-//@WebMvcTest(EmployeeController.class)
 @SpringBootTest
 public class TestEmployeeService {
 
