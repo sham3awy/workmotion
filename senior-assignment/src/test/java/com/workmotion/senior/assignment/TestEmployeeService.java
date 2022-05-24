@@ -4,14 +4,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.workmotion.senior.assignment.entities.Employee;
 import com.workmotion.senior.assignment.enums.StateEnum;
+import com.workmotion.senior.assignment.models.dto.EmployeeResponse;
+import com.workmotion.senior.assignment.models.orm.Employee;
 import com.workmotion.senior.assignment.services.EmployeeServiceImpl;
 
 public class TestEmployeeService {
 
     private EmployeeServiceImpl employeeService = new EmployeeServiceImpl();
     Employee employee;
+    EmployeeResponse employeeResponse;
 
     @BeforeEach
     public void before() {
@@ -19,7 +21,7 @@ public class TestEmployeeService {
         employee.setName("Mohamed");
         employee.setMobile("0556489014");
         employee.setEmail("mohamedabosham3a@yahoo.com");
-        employee = employeeService.createEmployee(employee);
+        employeeResponse = employeeService.addEmployee(employee);
     }
 
     @Test
@@ -28,11 +30,11 @@ public class TestEmployeeService {
         employee.setName("Mohamed");
         employee.setMobile("0556489014");
         employee.setEmail("mohamedabosham3a@yahoo.com");
-        employee = employeeService.createEmployee(employee);
-        Assertions.assertEquals(employee.getId(), 2L);
-        Assertions.assertEquals(employee.getName(), "Mohamed");
-        Assertions.assertEquals(employee.getMobile(), "0556489014");
-        Assertions.assertEquals(employee.getEmail(), "mohamedabosham3a@yahoo.com");
+        employeeResponse = employeeService.addEmployee(employee);
+        Assertions.assertEquals(employeeResponse.getEmployee().getId(), 2L);
+        Assertions.assertEquals(employeeResponse.getEmployee().getName(), "Mohamed");
+        Assertions.assertEquals(employeeResponse.getEmployee().getMobile(), "0556489014");
+        Assertions.assertEquals(employeeResponse.getEmployee().getEmail(), "mohamedabosham3a@yahoo.com");
     }
 
     @Test
@@ -65,11 +67,11 @@ public class TestEmployeeService {
 
     @Test
     public void getEmployee() {
-        Employee employee = employeeService.fetchEmployeeDetails(1L);
-        Assertions.assertEquals(employee.getId(), 1L);
-        Assertions.assertEquals(employee.getName(), "Mohamed");
-        Assertions.assertEquals(employee.getMobile(), "0556489014");
-        Assertions.assertEquals(employee.getEmail(), "mohamedabosham3a@yahoo.com");
+    	EmployeeResponse employee = employeeService.fetchEmployeeDetails(1L);
+        Assertions.assertEquals(employee.getEmployee().getId(), 1L);
+        Assertions.assertEquals(employee.getEmployee().getName(), "Mohamed");
+        Assertions.assertEquals(employee.getEmployee().getMobile(), "0556489014");
+        Assertions.assertEquals(employee.getEmployee().getEmail(), "mohamedabosham3a@yahoo.com");
 
     }
 

@@ -1,12 +1,13 @@
 package com.workmotion.senior.assignment.services;
 
-import com.workmotion.senior.assignment.entities.Employee;
+import com.workmotion.senior.assignment.models.dto.EmployeeResponse;
+import com.workmotion.senior.assignment.models.orm.Employee;
 
 public interface EmployeeService {
 
-	Employee createEmployee(Employee employee);
+	EmployeeResponse addEmployee(Employee employee);
 
-	Employee fetchEmployeeDetails(Long id);
+	EmployeeResponse fetchEmployeeDetails(Long id);
 
-	Employee changeState(Long id, String state) throws Exception;
+	EmployeeResponse changeState(Long id, String state);
 }
